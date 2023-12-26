@@ -11,27 +11,27 @@ enum Color {
 }
 
 export enum Action {
-  Loaded = "Loaded",
   Started = "Started",
-  Active = "Active",
+  Success = "Success",
   Hangup = "Hangup"
 }
 
 class Logger {
-    public info(message: string): void {
-        return this.baseLog(`${Color.Green}${message}`)
-      }
-
-  public log(action: Action, tabIndex?: number, tabUid?: string): void {
-    return this.baseLog(`${this.getActionColor(action)}${action}`, tabIndex, tabUid)
+  public info(message: string): void {
+    return this.baseLog(`${Color.Green}${message}`)
   }
 
-  public error(message: any, tabIndex?: number, tabUid?: string) {
-    return this.baseLog(`${Color.Red}${message}`, tabIndex, tabUid)
+  public log(action: Action, bId?: number, pagesCount?: number): void {
+    const count = pagesCount ? `[${pagesCount} pages]` : ""
+    return this.baseLog(`${this.getActionColor(action)}${action} ${count}`, bId)
   }
 
-  private baseLog(message: string, tabIndex?: number, tabUid?: string): void {
-    const tabInfo = tabIndex && tabUid ? `${Color.White}#${this.padZeros(tabIndex)}${Color.Yellow}[${tabUid.slice(0, 10)}] ` : ""
+  public error(message: any, bId?: number) {
+    return this.baseLog(`${Color.Red}${message}`, bId)
+  }
+
+  private baseLog(message: string, bId?: number): void {
+    const tabInfo = bId !== undefined ? `${Color.Yellow}#${bId + 1} ` : ""
     // eslint-disable-next-line no-console
     console.log(`${this.getDate()} ${tabInfo}${message}`)
   }
@@ -50,11 +50,9 @@ class Logger {
 
   private getActionColor(action: Action): Color {
     switch (action) {
-      case Action.Loaded:
-        return Color.Magenta
       case Action.Started:
-        return Color.Blue
-      case Action.Active:
+        return Color.Magenta
+      case Action.Success:
         return Color.Green
       case Action.Hangup:
         return Color.Red
